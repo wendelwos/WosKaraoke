@@ -34,16 +34,4 @@ public_html/
 
 ---
 
-## ✅ Checklist Final
-
-- [ ] Arquivos enviados para public_html
-- [ ] Script SQL executado no phpMyAdmin
-- [ ] Permissões das pastas configuradas (755)
-- [ ] Página inicial carregando
-- [ ] Login admin funcionando
-- [ ] Senhas padrão alteradas
-- [ ] HTTPS ativo no domínio
-
----
-
 **Desenvolvido com ❤️ para Karaoke Show**
