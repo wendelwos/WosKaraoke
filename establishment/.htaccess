@@ -1,0 +1,10 @@
+# Redirecionar .html para .php
+RewriteEngine On
+
+# Se o arquivo .php existe, redireciona de .html para .php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+# Redirecionar requisições .html explícitas para .php
+RewriteRule ^(.+)\.html$ $1.php [R=301,L]

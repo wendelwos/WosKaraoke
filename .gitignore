@@ -1,0 +1,43 @@
+# Dependências
+/vendor/
+/node_modules/
+
+# Variáveis de ambiente (NUNCA versionar!)
+.env
+.env.local
+.env.*.local
+
+# Cache e arquivos temporários
+/data/rate_limits/
+/data/*.db
+/cache/*
+!cache/.gitkeep
+
+# Logs
+*.log
+/logs/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Deploy artifacts
+*.zip
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Composer
+composer.phar
+
+# PHPUnit
+.phpunit.result.cache
+/coverage/
+
+# Build
+/dist/
+/build/

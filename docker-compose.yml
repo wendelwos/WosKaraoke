@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: karaoke_app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME:-woskaraoke}
+      DB_USER: ${DB_USER:-karaoke_user}
+      DB_PASS: ${DB_PASS:-karaoke_pass}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      PUSHER_APP_ID: ${PUSHER_APP_ID:-}
+      PUSHER_KEY: ${PUSHER_KEY:-}
+      PUSHER_SECRET: ${PUSHER_SECRET:-}
+      PUSHER_CLUSTER: ${PUSHER_CLUSTER:-sa1}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_ENV: ${APP_ENV:-development}
+    volumes:
+      - ./data:/var/www/html/data
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - karaoke_net
+
+  db:
+    image: mysql:8.0
+    container_name: karaoke_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: ${DB_NAME:-woskaraoke}
+      MYSQL_USER: ${DB_USER:-karaoke_user}
+      MYSQL_PASSWORD: ${DB_PASS:-karaoke_pass}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - karaoke_net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: karaoke_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+      UPLOAD_LIMIT: 300M
+    depends_on:
+      - db
+    networks:
+      - karaoke_net
+
+volumes:
+  mysql_data:
+
+
+networks:
+  karaoke_net:
+    driver: bridge

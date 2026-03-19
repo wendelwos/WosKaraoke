@@ -1,0 +1,28 @@
+{
+    "name": "woskaraoke/karaoke-system",
+    "description": "Sistema de busca de musicas para karaoke",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "pusher/pusher-php-server": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "WosKaraoke\\": "includes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "migrate": "php database/migrate.php",
+        "migrate:status": "php database/migrate.php status"
+    }
+}

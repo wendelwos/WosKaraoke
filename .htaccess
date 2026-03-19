@@ -1,0 +1,104 @@
+# WosKaraoke - Apache Configuration
+# Performance, Security & URL Rewriting
+
+# ============================================
+# COMPRESSÃO GZIP (mod_deflate)
+# ============================================
+<IfModule mod_deflate.c>
+    # Comprimir respostas por tipo
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE image/svg+xml
+    
+    # Não comprimir imagens já comprimidas
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|ico)$ no-gzip
+</IfModule>
+
+# ============================================
+# CACHE DE ASSETS ESTÁTICOS (mod_expires)
+# ============================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Imagens: 1 mês
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # CSS e JS: 1 semana
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    
+    # Fonts: 1 mês
+    ExpiresByType font/woff2 "access plus 1 month"
+    ExpiresByType font/woff "access plus 1 month"
+    ExpiresByType application/font-woff2 "access plus 1 month"
+    
+    # HTML e JSON: sem cache (dinâmico)
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType application/json "access plus 0 seconds"
+</IfModule>
+
+# ============================================
+# HEADERS DE SEGURANÇA
+# ============================================
+<IfModule mod_headers.c>
+    # Prevenir clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevenir MIME sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # XSS Protection
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Remove server signature
+    Header unset Server
+    Header unset X-Powered-By
+</IfModule>
+
+# ============================================
+# URL REWRITING
+# ============================================
+RewriteEngine On
+
+# Força HTTPS em produção (descomente quando tiver SSL)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Se não for arquivo ou diretório existente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Adiciona .php ao final
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Redireciona .php para sem extensão (apenas GET)
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
+RewriteRule ^ %1 [R=301,L]
+
+# ============================================
+# PROTEÇÕES
+# ============================================
+# Bloquear acesso a arquivos sensíveis
+<FilesMatch "\.(env|log|sql|sqlite|db)$">
+    Require all denied
+</FilesMatch>
+
+# Bloquear acesso ao diretório data
+<IfModule mod_rewrite.c>
+    RewriteRule ^data/ - [F,L]
+</IfModule>

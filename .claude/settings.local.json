@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php vendor/bin/phpunit --testdox)",
+      "Bash(php database/migrate.php status)",
+      "Bash(DB_TYPE=sqlite php database/migrate.php status)",
+      "Bash(php vendor/bin/phpunit --filter MigrationRunner --testdox)",
+      "Bash(gh auth:*)"
+    ]
+  }
+}
