@@ -55,12 +55,15 @@ class Env
                 // Remove aspas se presentes
                 $value = trim($value, '"\'');
                 
-                // Armazena internamente
-                self::$variables[$key] = $value;
-                
-                // Define no ambiente
-                $_ENV[$key] = $value;
-                putenv("$key=$value");
+                // Só define se a variável não existir no ambiente
+                if (getenv($key) === false) {
+                    // Armazena internamente
+                    self::$variables[$key] = $value;
+                    
+                    // Define no ambiente
+                    $_ENV[$key] = $value;
+                    putenv("$key=$value");
+                }
             }
         }
 

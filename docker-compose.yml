@@ -11,9 +11,9 @@ services:
       - "8080:80"
     environment:
       DB_HOST: db
-      DB_NAME: ${DB_NAME:-woskaraoke}
-      DB_USER: ${DB_USER:-karaoke_user}
-      DB_PASS: ${DB_PASS:-karaoke_pass}
+      DB_NAME: woskaraoke
+      DB_USER: karaoke_user
+      DB_PASS: karaoke_pass
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       PUSHER_APP_ID: ${PUSHER_APP_ID:-}
@@ -36,9 +36,9 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: ${DB_NAME:-woskaraoke}
-      MYSQL_USER: ${DB_USER:-karaoke_user}
-      MYSQL_PASSWORD: ${DB_PASS:-karaoke_pass}
+      MYSQL_DATABASE: woskaraoke
+      MYSQL_USER: karaoke_user
+      MYSQL_PASSWORD: karaoke_pass
     ports:
       - "3307:3306"
     volumes:

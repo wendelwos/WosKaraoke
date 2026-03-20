@@ -111,9 +111,26 @@ class MigrationRunner
             $stmt = $this->pdo->prepare("INSERT INTO _migrations (migration) VALUES (?)");
             $stmt->execute([$name]);
 
-            $this->pdo->commit();
+            try {
+                if ($this->pdo->inTransaction()) {
+                    $this->pdo->commit();
+                }
+            } catch (\PDOException $commitEx) {
+                // MySQL DDL statements implicitly commit transactions. 
+                // Ignore "no active transaction" errors.
+                if (strpos(strtolower($commitEx->getMessage()), 'active transaction') === false && 
+                    strpos($commitEx->getMessage(), '1305') === false) {
+                    throw $commitEx;
+                }
+            }
         } catch (\Throwable $e) {
-            $this->pdo->rollBack();
+            try {
+                if ($this->pdo->inTransaction()) {
+                    $this->pdo->rollBack();
+                }
+            } catch (\PDOException $rollbackEx) {
+                // Ignore rollback errors 
+            }
             throw new \RuntimeException(
                 "Migration {$name} failed: " . $e->getMessage(),
                 0,
